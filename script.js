@@ -1,22 +1,51 @@
-import { setupGround, updateGround } from "./ground.js"
+import { setupGround, updateGround } from "./ground.js";
 const WORLD_WIDTH = 100;
 const WORLD_HEIGHT = 30;
+const SPEED_SCALE_INCREASE = 0.00001;
 
 const worldElem = document.querySelector("[data-world]");
+const scoreElem = document.querySelector("[data-score]");
 
 let lastTime = null;
-const update = (time) => {
-    if (lastTime === null) {
-        lastTime = time;
-        window.requestAnimationFrame(update)
-        return
-    }
-    let delta = time - lastTime
-    updateGround(delta, 1)
-    lastTime = time
-    window.requestAnimationFrame(update)
-}
+let speedScale = 1;
+let score = null;
+let shouldUpdateSpeedScale = true;
+let speedTimer = null;
 
+const updateSpeedScale = (delta) => {
+    speedScale += delta * SPEED_SCALE_INCREASE;
+    shouldUpdateSpeedScale = true;
+    speedTimer = null;
+};
+
+const updateScore = (delta) => {
+    score += delta * 0.01; //10 points per second
+    scoreElem.textContent = Math.floor(score);
+};
+const update = (time_ms) => {
+    //time in milliseconds
+    if (lastTime === null) {
+        lastTime = time_ms;
+        window.requestAnimationFrame(update);
+        return;
+    }
+
+    let delta = time_ms - lastTime;
+    //updateGround(delta, 1);
+
+    /*if (shouldUpdateSpeedScale) {
+        speedTimer = setTimeout(() => {
+            updateSpeedScale(delta);
+        }, 1000);
+        shouldUpdateSpeedScale = false;
+    }*/
+    updateSpeedScale(delta);
+    updateGround(delta, speedScale);
+
+    updateScore(delta);
+    lastTime = time_ms;
+    window.requestAnimationFrame(update);
+};
 
 const scaleWorldWidth = () => {
     let reqRatio = WORLD_WIDTH / WORLD_HEIGHT;
@@ -41,9 +70,14 @@ const scaleWorldWidth = () => {
 
 const handleStart = () => {
     lastTime = null;
-    setupGround()
-    window.requestAnimationFrame(update)
-}
+    speedScale = 1;
+    score = 0;
+    if (speedTimer !== null) {
+        clearTimeout(speedTimer);
+    }
+    setupGround();
+    window.requestAnimationFrame(update);
+};
 scaleWorldWidth();
 window.addEventListener("resize", scaleWorldWidth);
-window.addEventListener("keydown",handleStart,{once:true})
+window.addEventListener("keydown", handleStart, { once: true });
