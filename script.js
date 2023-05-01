@@ -1,3 +1,4 @@
+import { setupDino, updateDino } from "./dino.js";
 import { setupGround, updateGround } from "./ground.js";
 const WORLD_WIDTH = 100;
 const WORLD_HEIGHT = 30;
@@ -5,6 +6,7 @@ const SPEED_SCALE_INCREASE = 0.00001;
 
 const worldElem = document.querySelector("[data-world]");
 const scoreElem = document.querySelector("[data-score]");
+const textElem = document.querySelector("[data-text]");
 
 let lastTime = null;
 let speedScale = 1;
@@ -43,6 +45,8 @@ const update = (time_ms) => {
     updateGround(delta, speedScale);
 
     updateScore(delta);
+
+    updateDino(delta,speedScale)
     lastTime = time_ms;
     window.requestAnimationFrame(update);
 };
@@ -72,10 +76,12 @@ const handleStart = () => {
     lastTime = null;
     speedScale = 1;
     score = 0;
+    textElem.classList.add("hide")
     if (speedTimer !== null) {
         clearTimeout(speedTimer);
     }
     setupGround();
+    setupDino()
     window.requestAnimationFrame(update);
 };
 scaleWorldWidth();
