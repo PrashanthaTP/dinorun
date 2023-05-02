@@ -57,5 +57,11 @@ export const updateDino = (delta,speedScale) => {
     handleRun(delta,speedScale)
     handleJump(delta)
 }
+export const getDinoRect = () => {
+    return dinoElem.getBoundingClientRect();
+};
 
+export const setDinoLose = () => {
+    dinoElem.src = "assets/dino-lose.png"
+}
 

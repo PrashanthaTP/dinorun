@@ -35,6 +35,12 @@ const createCactus = () => {
 	worldElem.append(cactus)
 }
 
+export const getCactusRects = () => {
+	return [ ...document.querySelectorAll( "[data-cactus]" ) ].map( cactus => {
+		return cactus.getBoundingClientRect()
+	} );
+}
+
 const randomNumberBetween = ( min, max ) => {
 	return Math.floor(Math.random()*(max-min+1) + min)
 }
